@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>THEBESTmodZ Access</title>
 
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      padding: 30px 15px;
       background: #111;
       color: white;
+      font-family: Arial, sans-serif;
       text-align: center;
     }
 
     .box {
       max-width: 400px;
-      margin: 70px auto;
+      margin: 40px auto;
       padding: 25px;
       background: #1e1e1e;
       border-radius: 15px;
     }
 
     .item {
-      background: #333;
+      background: #2b2b2b;
       padding: 15px;
       margin: 15px 0;
       border-radius: 10px;
@@ -30,52 +31,81 @@
     }
 
     .value {
-      font-size: 19px;
       margin-top: 8px;
+      font-size: 20px;
       word-break: break-all;
     }
 
     button {
-      padding: 10px 16px;
-      border: none;
+      margin-top: 10px;
+      padding: 10px 15px;
+      border: 0;
       border-radius: 7px;
       cursor: pointer;
-      margin-top: 10px;
+    }
+
+    #timer {
+      font-size: 18px;
+      margin-top: 20px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="box">
-    <h1>THEBESTmodZ</h1>
-    <p>Access Details</p>
+<div class="box">
 
-    <div class="item">
-      <strong>Username</strong>
-      <div class="value" id="username">BESTUSER123</div>
-      <button onclick="copyText('username')">Copy Username</button>
-    </div>
+  <h1>THEBESTmodZ</h1>
+  <p>Access Portal</p>
 
-    <div class="item">
-      <strong>Password</strong>
-      <div class="value" id="password">ABC123</div>
-      <button onclick="copyText('password')">Copy Password</button>
-    </div>
+  <div class="item">
+    <strong>Username</strong>
+    <div class="value" id="username">TESTUSER123</div>
+    <button onclick="copyText('username')">Copy Username</button>
   </div>
 
-  <script>
-    function copyText(id) {
-      const text = document.getElementById(id).innerText;
+  <div class="item">
+    <strong>Access Code</strong>
+    <div class="value" id="code">TEST123</div>
+    <button onclick="copyText('code')">Copy Code</button>
+  </div>
 
-      navigator.clipboard.writeText(text).then(function() {
-        alert("Copied!");
-      });
-    }
-  </script>
-<script type="module">
-  // Firebase connection will go here.
-  // Keep private credentials and admin operations off the public page.
+  <div id="timer">
+    Expires in: <span id="countdown">40:00</span>
+  </div>
+
+</div>
+
+<script>
+
+let timeLeft = 40 * 60;
+
+setInterval(function() {
+
+  if (timeLeft <= 0) {
+    document.getElementById("countdown").innerText = "EXPIRED";
+    return;
+  }
+
+  let minutes = Math.floor(timeLeft / 60);
+  let seconds = timeLeft % 60;
+
+  document.getElementById("countdown").innerText =
+    minutes + ":" + String(seconds).padStart(2, "0");
+
+  timeLeft--;
+
+}, 1000);
+
+function copyText(id) {
+  let text = document.getElementById(id).innerText;
+
+  navigator.clipboard.writeText(text).then(function() {
+    alert("Copied!");
+  });
+}
+
 </script>
+
 </body>
 </html>
