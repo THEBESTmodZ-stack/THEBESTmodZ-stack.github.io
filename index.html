@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THEBESTmodZ Password Portal</title>
+  <title>THEBESTmodZ Access</title>
 
   <style>
     body {
@@ -15,31 +15,32 @@
 
     .box {
       max-width: 400px;
-      margin: 100px auto;
+      margin: 70px auto;
       padding: 25px;
       background: #1e1e1e;
       border-radius: 15px;
     }
 
-    h1 {
-      margin-bottom: 10px;
-    }
-
-    .password {
+    .item {
       background: #333;
       padding: 15px;
+      margin: 15px 0;
       border-radius: 10px;
-      font-size: 22px;
-      margin: 20px 0;
+      text-align: left;
+    }
+
+    .value {
+      font-size: 19px;
+      margin-top: 8px;
       word-break: break-all;
     }
 
     button {
-      padding: 13px 25px;
+      padding: 10px 16px;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
+      border-radius: 7px;
       cursor: pointer;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -48,22 +49,30 @@
 
   <div class="box">
     <h1>THEBESTmodZ</h1>
-    <p>Current Password</p>
+    <p>Access Details</p>
 
-    <div class="password" id="password">ABC123</div>
+    <div class="item">
+      <strong>Username</strong>
+      <div class="value" id="username">BESTUSER123</div>
+      <button onclick="copyText('username')">Copy Username</button>
+    </div>
 
-    <button onclick="copyPassword()">Copy Password</button>
+    <div class="item">
+      <strong>Password</strong>
+      <div class="value" id="password">ABC123</div>
+      <button onclick="copyText('password')">Copy Password</button>
+    </div>
   </div>
 
   <script>
-    function copyPassword() {
-      const password = document.getElementById("password").innerText;
+    function copyText(id) {
+      const text = document.getElementById(id).innerText;
 
-      navigator.clipboard.writeText(password).then(function() {
-        alert("Password copied!");
+      navigator.clipboard.writeText(text).then(function() {
+        alert("Copied!");
       });
     }
   </script>
 
 </body>
-      </html>
+</html>
