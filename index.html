@@ -41,6 +41,7 @@
       padding: 10px 15px;
       border: 0;
       border-radius: 7px;
+      cursor: pointer;
     }
 
     #timer {
@@ -52,111 +53,200 @@
 
 <body>
 
-<div class="box">
-  <h1>THEBESTmodZ</h1>
-  <p>Access Portal</p>
+  <div class="box">
+    <h1>THEBESTmodZ</h1>
+    <p>Access Portal</p>
 
-  <div class="item">
-    <strong>Access Code</strong>
-    <div class="value" id="code">Loading...</div>
-    <button onclick="copyCode()">Copy Code</button>
+    <div class="item">
+      <strong>Access Code</strong>
+      <div class="value" id="code">Loading...</div>
+      <button onclick="copyCode()">Copy Code</button>
+    </div>
+
+    <div id="timer">
+      Expiry: <span id="countdown">Loading...</span>
+    </div>
   </div>
 
-  <div id="timer">
-    Expiry: <span id="countdown">Loading...</span>
-  </div>
-</div>
+  <script type="module">
 
-<script type="module">
-  import { initializeApp } from
-    "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-  import {
-    getFirestore,
-    doc,
-    getDoc
-  } from
-    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    } from
+      "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAKnbL750l0jFCkstt4AEOkj5ihNvyDpKk",
-    authDomain: "thebestmodz.firebaseapp.com",
-    projectId: "thebestmodz",
-    storageBucket: "thebestmodz.firebasestorage.app",
-    messagingSenderId: "292853293613",
-    appId: "1:292853293613:web:f347ef56932532b8d9cea4"
-  };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    /* =========================
+       FIREBASE CONFIG
+       ========================= */
 
-  async function loadAccess() {
-    try {
-      const ref = doc(db, "settings", "access");
-      const snapshot = await getDoc(ref);
+    const firebaseConfig = {
 
-      if (!snapshot.exists()) {
+      apiKey: "AIzaSyAKnbL750l0jFCkstt4AEOkj5ihNvyDpKk",
+
+      authDomain: "thebestmodz.firebaseapp.com",
+
+      projectId: "thebestmodz",
+
+      storageBucket: "thebestmodz.firebasestorage.app",
+
+      messagingSenderId: "292853293613",
+
+      appId: "1:292853293613:web:f347ef56932532b8d9cea4"
+
+    };
+
+
+    /* =========================
+       START FIREBASE
+       ========================= */
+
+    const app = initializeApp(firebaseConfig);
+
+    const db = getFirestore(app);
+
+
+    /* =========================
+       LOAD ACCESS CODE
+       ========================= */
+
+    async function loadAccess() {
+
+      try {
+
+        const ref = doc(db, "settings", "access");
+
+        const snapshot = await getDoc(ref);
+
+
+        if (!snapshot.exists()) {
+
+          document.getElementById("code").innerText =
+            "No access code found";
+
+          document.getElementById("countdown").innerText =
+            "Unavailable";
+
+          return;
+        }
+
+
+        const data = snapshot.data();
+
+
         document.getElementById("code").innerText =
-          "No access code found";
-        return;
+          data.code || "No code";
+
+
+        if (data.expiresAt) {
+
+          startCountdown(
+            data.expiresAt.toMillis()
+          );
+
+        } else {
+
+          document.getElementById("countdown").innerText =
+            "No expiry set";
+
+        }
+
       }
 
-      const data = snapshot.data();
+      catch (error) {
 
-      document.getElementById("code").innerText =
-        data.code || "No code";
+        console.error(error);
 
-      if (data.expiresAt) {
-        startCountdown(data.expiresAt.toMillis());
-      }
-    } catch (error) {
-      console.error(error);
-      document.getElementById("code").innerText =
-        "Unable to load";
-    }
-  }
+        document.getElementById("code").innerText =
+          "Unable to load";
 
-  function startCountdown(expiry) {
-    function update() {
-      const remaining = expiry - Date.now();
-
-      if (remaining <= 0) {
         document.getElementById("countdown").innerText =
-          "EXPIRED";
-        return;
+          "Unavailable";
+
       }
 
-      const minutes = Math.floor(remaining / 60000);
-      const seconds = Math.floor((remaining % 60000) / 1000);
-
-      document.getElementById("countdown").innerText =
-        minutes + ":" + String(seconds).padStart(2, "0");
-
-      setTimeout(update, 1000);
     }
 
-    update();
-  }
 
-  loadAccess();
+    /* =========================
+       COUNTDOWN
+       ========================= */
 
-  window.copyCode = function() {
-    const code = document.getElementById("code").innerText;
+    function startCountdown(expiry) {
 
-    navigator.clipboard.writeText(code).then(() => {
-      alert("Code copied!");
-    });
-  };
-</script>
+      function update() {
 
-  function copyCode() {
-    const code = document.getElementById("code").innerText;
+        const remaining =
+          expiry - Date.now();
 
-    navigator.clipboard.writeText(code);
-    alert("Code copied!");
-  }
 
-</script>
+        if (remaining <= 0) {
+
+          document.getElementById("countdown").innerText =
+            "EXPIRED";
+
+          return;
+
+        }
+
+
+        const minutes =
+          Math.floor(remaining / 60000);
+
+
+        const seconds =
+          Math.floor(
+            (remaining % 60000) / 1000
+          );
+
+
+        document.getElementById("countdown").innerText =
+          minutes + ":" +
+          String(seconds).padStart(2, "0");
+
+
+        setTimeout(update, 1000);
+
+      }
+
+
+      update();
+
+    }
+
+
+    /* =========================
+       COPY CODE
+       ========================= */
+
+    window.copyCode = function() {
+
+      const code =
+        document.getElementById("code").innerText;
+
+
+      navigator.clipboard.writeText(code)
+        .then(function() {
+
+          alert("Code copied!");
+
+        });
+
+    };
+
+
+    /* =========================
+       START
+       ========================= */
+
+    loadAccess();
+
+  </script>
 
 </body>
 </html>
