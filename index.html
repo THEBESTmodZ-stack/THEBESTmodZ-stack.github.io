@@ -1,11 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>THEBESTmodZ Password Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THEBESTmodZ Password Portal</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+    }
+
+    .box {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 25px;
+      background: #1e1e1e;
+      border-radius: 15px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .password {
+      background: #333;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 22px;
+      margin: 20px 0;
+      word-break: break-all;
+    }
+
+    button {
+      padding: 13px 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
 </head>
+
 <body>
-    <h1>THEBESTmodZ Password Portal</h1>
-    <p>Current Password:</p>
-    <h2>ABC123</h2>
+
+  <div class="box">
+    <h1>THEBESTmodZ</h1>
+    <p>Current Password</p>
+
+    <div class="password" id="password">ABC123</div>
+
+    <button onclick="copyPassword()">Copy Password</button>
+  </div>
+
+  <script>
+    function copyPassword() {
+      const password = document.getElementById("password").innerText;
+
+      navigator.clipboard.writeText(password).then(function() {
+        alert("Password copied!");
+      });
+    }
+  </script>
+
 </body>
-</html>
+      </html>
