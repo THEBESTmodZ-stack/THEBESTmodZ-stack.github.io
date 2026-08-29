@@ -41,12 +41,11 @@
       padding: 10px 15px;
       border: 0;
       border-radius: 7px;
-      cursor: pointer;
     }
 
     #timer {
-      font-size: 18px;
       margin-top: 20px;
+      font-size: 18px;
     }
   </style>
 </head>
@@ -54,56 +53,32 @@
 <body>
 
 <div class="box">
-
   <h1>THEBESTmodZ</h1>
   <p>Access Portal</p>
 
   <div class="item">
-    <strong>Username</strong>
-    <div class="value" id="username">TESTUSER123</div>
-    <button onclick="copyText('username')">Copy Username</button>
-  </div>
-
-  <div class="item">
     <strong>Access Code</strong>
-    <div class="value" id="code">TEST123</div>
-    <button onclick="copyText('code')">Copy Code</button>
+    <div class="value" id="code">Loading...</div>
+    <button onclick="copyCode()">Copy Code</button>
   </div>
 
   <div id="timer">
-    Expires in: <span id="countdown">40:00</span>
+    Expiry: <span id="countdown">Loading...</span>
   </div>
-
 </div>
 
-<script>
+<script type="module">
 
-let timeLeft = 40 * 60;
+  // Firebase connection goes here.
+  // We will add your Firebase web configuration
+  // in the next step.
 
-setInterval(function() {
+  function copyCode() {
+    const code = document.getElementById("code").innerText;
 
-  if (timeLeft <= 0) {
-    document.getElementById("countdown").innerText = "EXPIRED";
-    return;
+    navigator.clipboard.writeText(code);
+    alert("Code copied!");
   }
-
-  let minutes = Math.floor(timeLeft / 60);
-  let seconds = timeLeft % 60;
-
-  document.getElementById("countdown").innerText =
-    minutes + ":" + String(seconds).padStart(2, "0");
-
-  timeLeft--;
-
-}, 1000);
-
-function copyText(id) {
-  let text = document.getElementById(id).innerText;
-
-  navigator.clipboard.writeText(text).then(function() {
-    alert("Copied!");
-  });
-}
 
 </script>
 
