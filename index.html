@@ -1,252 +1,248 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>THEBESTmodZ Access</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THEBESTmodZ Access</title>
 
-  <style>
-    body {
-      margin: 0;
-      padding: 30px 15px;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-    .box {
-      max-width: 400px;
-      margin: 40px auto;
-      padding: 25px;
-      background: #1e1e1e;
-      border-radius: 15px;
-    }
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  background:linear-gradient(135deg,#120018,#25003d,#4a0072);
+  font-family:Arial,sans-serif;
+  color:white;
+}
 
-    .item {
-      background: #2b2b2b;
-      padding: 15px;
-      margin: 15px 0;
-      border-radius: 10px;
-      text-align: left;
-    }
+.box{
+  width:100%;
+  max-width:420px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(156,39,176,0.4);
+  border-radius:20px;
+  padding:25px;
+  box-shadow:0 0 30px rgba(156,39,176,0.5);
+}
 
-    .value {
-      margin-top: 8px;
-      font-size: 20px;
-      word-break: break-all;
-    }
+h1{
+  text-align:center;
+  color:#d896ff;
+  margin-bottom:8px;
+}
 
-    button {
-      margin-top: 10px;
-      padding: 10px 15px;
-      border: 0;
-      border-radius: 7px;
-      cursor: pointer;
-    }
+.subtitle{
+  text-align:center;
+  opacity:.8;
+  margin-bottom:25px;
+}
 
-    #timer {
-      margin-top: 20px;
-      font-size: 18px;
-    }
-  </style>
+.item{
+  background:rgba(255,255,255,0.06);
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:15px;
+}
+
+.label{
+  font-size:14px;
+  opacity:.8;
+}
+
+.value{
+  font-size:20px;
+  color:#d896ff;
+  margin-top:8px;
+  word-break:break-all;
+}
+
+button{
+  width:100%;
+  margin-top:10px;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#9C27B0;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+.timer{
+  text-align:center;
+  margin-top:20px;
+  font-size:18px;
+}
+
+.countdown{
+  color:#d896ff;
+  font-weight:bold;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="box">
-    <h1>THEBESTmodZ</h1>
-    <p>Access Portal</p>
+<div class="box">
 
-    <div class="item">
-      <strong>Access Code</strong>
-      <div class="value" id="code">Loading...</div>
-      <button onclick="copyCode()">Copy Code</button>
-    </div>
+  <h1>👑 THEBESTmodZ</h1>
+  <div class="subtitle">Premium Access Portal</div>
 
-    <div id="timer">
-      Expiry: <span id="countdown">Loading...</span>
-    </div>
+  <div class="item">
+    <div class="label">Username</div>
+    <div class="value" id="username">Loading...</div>
+    <button onclick="copyUsername()">Copy Username</button>
   </div>
 
-  <script type="module">
+  <div class="item">
+    <div class="label">Access Key</div>
+    <div class="value" id="code">Loading...</div>
+    <button onclick="copyCode()">Copy Key</button>
+  </div>
 
-    import { initializeApp } from
-      "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  <div class="timer">
+    ⏳ Expires In:
+    <span class="countdown" id="countdown">Loading...</span>
+  </div>
 
-    import {
-      getFirestore,
-      doc,
-      getDoc
-    } from
-      "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+</div>
 
+<script type="module">
 
-    /* =========================
-       FIREBASE CONFIG
-       ========================= */
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-    const firebaseConfig = {
+import {
+  getFirestore,
+  doc,
+  getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-      apiKey: "AIzaSyAKnbL750l0jFCkstt4AEOkj5ihNvyDpKk",
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "thebestmodz.firebaseapp.com",
+  projectId: "thebestmodz",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
 
-      authDomain: "thebestmodz.firebaseapp.com",
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-      projectId: "thebestmodz",
+async function loadAccess() {
 
-      storageBucket: "thebestmodz.firebasestorage.app",
+  try {
 
-      messagingSenderId: "292853293613",
+    const ref = doc(db,"settings","access");
+    const snapshot = await getDoc(ref);
 
-      appId: "1:292853293613:web:f347ef56932532b8d9cea4"
+    if(!snapshot.exists()){
 
-    };
+      document.getElementById("username").innerText =
+        "Not Found";
 
+      document.getElementById("code").innerText =
+        "Not Found";
 
-    /* =========================
-       START FIREBASE
-       ========================= */
+      document.getElementById("countdown").innerText =
+        "Unavailable";
 
-    const app = initializeApp(firebaseConfig);
-
-    const db = getFirestore(app);
-
-
-    /* =========================
-       LOAD ACCESS CODE
-       ========================= */
-
-    async function loadAccess() {
-
-      try {
-
-        const ref = doc(db, "settings", "access");
-
-        const snapshot = await getDoc(ref);
-
-
-        if (!snapshot.exists()) {
-
-          document.getElementById("code").innerText =
-            "No access code found";
-
-          document.getElementById("countdown").innerText =
-            "Unavailable";
-
-          return;
-        }
-
-
-        const data = snapshot.data();
-
-
-        document.getElementById("code").innerText =
-          data.code || "No code";
-
-
-        if (data.expiresAt) {
-
-          startCountdown(
-            data.expiresAt.toMillis()
-          );
-
-        } else {
-
-          document.getElementById("countdown").innerText =
-            "No expiry set";
-
-        }
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
-        document.getElementById("code").innerText =
-          "Unable to load";
-
-        document.getElementById("countdown").innerText =
-          "Unavailable";
-
-      }
-
+      return;
     }
 
+    const data = snapshot.data();
 
-    /* =========================
-       COUNTDOWN
-       ========================= */
+    document.getElementById("username").innerText =
+      data.username || "No Username";
 
-    function startCountdown(expiry) {
+    document.getElementById("code").innerText =
+      data.code || "No Code";
 
-      function update() {
-
-        const remaining =
-          expiry - Date.now();
-
-
-        if (remaining <= 0) {
-
-          document.getElementById("countdown").innerText =
-            "EXPIRED";
-
-          return;
-
-        }
-
-
-        const minutes =
-          Math.floor(remaining / 60000);
-
-
-        const seconds =
-          Math.floor(
-            (remaining % 60000) / 1000
-          );
-
-
-        document.getElementById("countdown").innerText =
-          minutes + ":" +
-          String(seconds).padStart(2, "0");
-
-
-        setTimeout(update, 1000);
-
-      }
-
-
-      update();
-
+    if(data.expiresAt){
+      startCountdown(data.expiresAt.toMillis());
+    }else{
+      document.getElementById("countdown").innerText =
+        "No expiry set";
     }
 
+  } catch(error){
 
-    /* =========================
-       COPY CODE
-       ========================= */
+    console.error(error);
 
-    window.copyCode = function() {
+    document.getElementById("username").innerText =
+      "Unable to load";
 
-      const code =
-        document.getElementById("code").innerText;
+    document.getElementById("code").innerText =
+      "Unable to load";
 
+    document.getElementById("countdown").innerText =
+      "Unavailable";
+  }
+}
 
-      navigator.clipboard.writeText(code)
-        .then(function() {
+function startCountdown(expiry){
 
-          alert("Code copied!");
+  function update(){
 
-        });
+    const remaining = expiry - Date.now();
 
-    };
+    if(remaining <= 0){
+      document.getElementById("countdown").innerText =
+        "EXPIRED";
+      return;
+    }
 
+    const minutes =
+      Math.floor(remaining / 60000);
 
-    /* =========================
-       START
-       ========================= */
+    const seconds =
+      Math.floor((remaining % 60000) / 1000);
 
-    loadAccess();
+    document.getElementById("countdown").innerText =
+      minutes + ":" +
+      String(seconds).padStart(2,"0");
 
-  </script>
+    setTimeout(update,1000);
+  }
+
+  update();
+}
+
+window.copyUsername = function(){
+
+  const username =
+    document.getElementById("username").innerText;
+
+  navigator.clipboard.writeText(username)
+    .then(() => alert("Username copied!"));
+}
+
+window.copyCode = function(){
+
+  const code =
+    document.getElementById("code").innerText;
+
+  navigator.clipboard.writeText(code)
+    .then(() => alert("Access key copied!"));
+}
+
+loadAccess();
+
+</script>
 
 </body>
-                </html>
+</html>
